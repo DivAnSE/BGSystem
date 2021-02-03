@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import 'element-ui/lib/theme-chalk/index.css'
 import {Form,FormItem,Input,Button,Message,Container,Header,Aside,Main,Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,Card} from 'element-ui'
-import {Row,Col,Table,TableColumn,Switch,Pagination,Dialog,MessageBox} from 'element-ui'
+import {Row,Col,Table,TableColumn,Switch,Pagination,Dialog,MessageBox,Tag,Tree} from 'element-ui'
 
 Vue.use(Form)
 Vue.use(FormItem)
@@ -24,5 +24,7 @@ Vue.use(TableColumn)
 Vue.use(Switch)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
