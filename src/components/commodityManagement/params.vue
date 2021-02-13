@@ -19,9 +19,7 @@
         },
         methods: {
             async getProductList() {
-                const {
-                    data: res
-                } = await this.$http.get('categories/:id/attributes')
+                const {data: res} = await this.$http.get('categories/:id/attributes')
                 if (res.meta.status !== 200) return this.$message.error('获取商品列表失败')
                 this.productList = res.data
                 console.log(this.productList);
