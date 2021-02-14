@@ -67,10 +67,10 @@
       <!-- 编辑角色信息 -->
       <el-dialog title="编辑" :visible.sync="editorRoleDialog" width="30%">
         <el-form :model="editorForm">
-          <el-form-item label="角色名称" :label-width="formLabelWidth">
+          <el-form-item label="角色名称">
             <el-input v-model="editorForm.roleName" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="角色描述" :label-width="formLabelWidth">
+          <el-form-item label="角色描述">
             <el-input v-model="editorForm.roleDesc" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
@@ -177,6 +177,14 @@
             },
             //根据ID删除角色
             async removeRole(id){
+              const removeConfirm = await this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).catch(err=>err)
+              if(removeConfirm !== 'confirm') {
+                return this.$message.info("已取消删除")
+              }
               const {data : res} = await this.$http.delete('roles/'+id)
               if(res.meta.status !== 200 ) return this.$message.error('删除失败！')
               this.$message.success('删除角色成功！')

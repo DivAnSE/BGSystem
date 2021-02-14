@@ -34,7 +34,7 @@
           <template slot-scope="scope">
             <el-button @click="modifyInfo(scope.row.id)" type="primary" size="mini">修改</el-button>
             <el-button @click="delUser(scope.row.id)" type="danger" size="mini">删除</el-button>
-            <el-button @click="assignPermissions(scope.row)" type="success" size="mini">分配权限</el-button>
+            <el-button @click="assignRoles(scope.row)" type="success" size="mini">分配角色</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,6 +78,20 @@
         <el-button @click="modifyUserDialog=false">取 消</el-button>
         <el-button type="primary" @click="confirmModifyUser">确 定</el-button>
       </span>
+    </el-dialog>
+    <!-- 分配角色dialog -->
+    <el-dialog title="分配角色" :visible.sync="assignRolesDialog" @close="assignRolesDialogClosed">
+      <el-form :model="form" ref="assignRoleRef">
+        <el-form-item label="选择角色">
+          <el-select v-model="form.region" placeholder="请选择角色" @change="selRolesName">
+            <el-option v-for="(item,index) in rolesList" :key="index" :label="item.roleName" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="assignRolesDialog = false">取 消</el-button>
+        <el-button type="primary" @click="confirmAssign">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -128,7 +142,14 @@ export default {
         mobile:[
             { required: true, message: '请输入手机号', trigger: 'blur' }
           ],
-      }
+      },
+      rolesList:[],
+      assignRolesDialog:false,
+      roleId:'',
+      userId:'',
+      form: {
+          region: ''
+        },
     }
   },
   created () {
@@ -214,6 +235,31 @@ export default {
         if(res.meta.status !== 200) return this.$message.error("删除失败")
         this.$message.success("删除成功");
         this.getUserList();
+    },
+    //分配角色
+    assignRoles(user){
+      this.assignRolesDialog = true
+      this.getRolesList();
+      this.userId = user.id
+    },
+    //获取角色列表
+    async getRolesList(){
+      const{data : res} =await this.$http.get('roles')
+      if(res.meta.status!==200) this.$message.error("获取角色列表失败！")
+      this.rolesList = res.data
+    },
+    selRolesName(id){
+      this.roleId = id
+    },
+    async confirmAssign(){
+      const {data : res} = await this.$http.put(`users/${this.userId}/role`,{rid:this.roleId})
+      if(res.meta.status !== 200) return this.$message.error("角色分配失败！")
+      this.$message.success("角色分配成功！")
+      this.assignRolesDialog = false
+      this.getUserList();
+    },
+    assignRolesDialogClosed(){
+      this.$refs.assignRoleRef.resetFields();
     }
   }
 }
